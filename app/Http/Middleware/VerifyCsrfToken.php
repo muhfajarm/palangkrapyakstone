@@ -20,6 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'finish',
-        'notification/handler',
+        '/notification/handler',
     ];
 }

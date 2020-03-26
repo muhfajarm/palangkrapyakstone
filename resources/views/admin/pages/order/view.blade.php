@@ -24,20 +24,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                <!-- TOMBOL UNTUK MENERIMA PEMBAYARAN -->
-                                <div class="float-right">
-                                    <!-- TOMBOL INI HANYA TAMPIL JIKA STATUSNYA 1 DARI ORDER DAN 0 DARI PEMBAYARAN -->
-                                    @if ($order->status == 1 && $order->payment->status == 0)
-                                    <a href="{{ route('orders.approve_payment', $order->invoice) }}" class="btn btn-primary btn-sm">Terima Pembayaran</a>
-                                    @endif
-                                </div>
-                            </h4>
-                        </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <h4>Detail Pelanggan</h4>
                                     <table class="table table-bordered">
                                         <tr>
@@ -54,13 +43,20 @@
                                         </tr>
                                         <tr>
                                             <th>Order Status</th>
-                                            <td>{!! $order->status_label !!}</td>
+                                            <td>
+                                                {!! $order->status_label !!}
+                                                <!-- TOMBOL UNTUK MENERIMA PEMBAYARAN -->
+                                                <!-- TOMBOL INI HANYA TAMPIL JIKA STATUSNYA 1 DARI ORDER DAN 0 DARI PEMBAYARAN -->
+                                                @if ($order->status == 'success')
+                                                <a href="{{ route('orders.approve_payment', $order->invoice) }}" class="btn btn-primary btn-sm" onsubmit="return confirm('Kamu Yakin?');">Proses Orderan</a>
+                                                @endif
+                                            </td>
                                         </tr>
-                                        @if ($order->status > 1)
+                                        @if ($order->status == 'proses' || $order->status == 'dikirim')
                                         <tr>
                                             <th>Nomor Resi</th>
                                             <td>
-                                                @if ($order->status == 2)
+                                                @if ($order->status == 'proses')
                                                 <form action="{{ route('orders.shipping') }}" method="post">
                                                     @csrf
                                                     <div class="input-group">
@@ -79,7 +75,7 @@
                                         @endif
                                     </table>
                                 </div>
-                                <div class="col-md-6">
+                                {{-- <div class="col-md-6">
                                     <h4>Detail Pembayaran</h4>
                                     @if ($order->status != 0)
                                     <table class="table table-bordered">
@@ -107,7 +103,7 @@
                                     @else
                                     <h5 class="text-center">Belum Konfirmasi Pembayaran</h5>
                                     @endif
-                                </div>
+                                </div> --}}
                                 <div class="col-md-12">
                                     <h4>Detail Produk</h4>
                                     <table class="table table-borderd table-hover">

@@ -6,7 +6,7 @@
 
 @section('content')
 	<section class="login_box_area p_120">
-		<div class="container">
+		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-3">
 					@include('layouts.ecommerce.module.sidebar')

@@ -6,7 +6,7 @@
 
 @section ('content')
 	<section class="login_box_area p_120">
-		<div class="container">
+		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-3">
 					@include('layouts.ecommerce.module.sidebar')
@@ -17,7 +17,9 @@
 							<div class="card">
                 <div class="card-header">
                     <h4 class="card-title float-left">Data Pelanggan</h4>
-                    <button class="btn btn-success btn-sm float-right" onclick="snap.pay('{{ $order->snap_token }}')">Selesaikan Pembayaran</button>
+                    @if ($order->status == 'pending')
+                      <button class="btn btn-success btn-sm float-right" onclick="snap.pay('{{ $order->snap_token }}')">Selesaikan Pembayaran</button>
+                    @endif
                 </div>
 								<div class="card-body">
 									<table>
@@ -25,7 +27,7 @@
                         <td width="30%">InvoiceID</td>
                         <td width="5%">:</td>
                         <th>
-                          @if ($order->status != 0)
+                          @if ($order->status != 'pending')
                             <a href="{{ route('customer.order_pdf', $order->invoice) }}" target="_blank"><strong>{{ $order->invoice }}</strong></a>
                           @else
                             <strong>{{ $order->invoice }}</strong>
@@ -45,7 +47,7 @@
                     <tr>
                         <td>Alamat</td>
                         <td>:</td>
-                        <th>{{-- $order->pelanggan_alamat }}, {{ $order->city->title }}, {{ $order->city->province->title --}}</th>
+                        <th>{{ $order->pelanggan_alamat }}, {{ $order->city->title }}, {{ $order->city->province->title }}</th>
                     </tr>
                   </table>
 								</div>
@@ -144,4 +146,23 @@
 
 @section('snap')
   <script src="{{ !config('services.midtrans.isProduction') ? 'https://app.sandbox.midtrans.com/snap/snap.js' : 'https://app.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
+  <script>
+    function (data, status) {
+            snap.pay(data.snap_token, {
+                // Optional
+                onSuccess: function (result) {
+                    location.reload();
+                },
+                // Optional
+                onPending: function (result) {
+                    location.reload();
+                },
+                // Optional
+                onError: function (result) {
+                    location.reload();
+                }
+            });
+        };
+        return false;
+  </script>
 @endsection

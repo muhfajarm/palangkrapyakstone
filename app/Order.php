@@ -32,13 +32,17 @@ class Order extends Model
 
     public function getStatusLabelAttribute()
     {
-        if ($this->status == 0) {
-            return '<span class="badge badge-secondary">Baru</span>';
-        } elseif ($this->status == 1) {
-            return '<span class="badge badge-primary">Menunggu Konfirmasi</span>';
-        } elseif ($this->status == 2) {
+        if ($this->status == 'pending') {
+            return '<span class="badge badge-secondary">Menunggu Pembayaran</span>';
+        } elseif ($this->status == 'success') {
+            return '<span class="badge badge-primary">Pembayaran Diterima</span>';
+        } elseif ($this->status == 'failed') {
+            return '<span class="badge badge-danger">Pembayaran Gagal</span>';
+        } elseif ($this->status == 'expired') {
+            return '<span class="badge badge-danger">Pembayaran Kadaluwarsa</span>';
+        } elseif ($this->status == 'proses') {
             return '<span class="badge badge-info">Proses</span>';
-        } elseif ($this->status == 3) {
+        } elseif ($this->status == 'dikirim') {
             return '<span class="badge badge-warning">Dikirim</span>';
         }
         return '<span class="badge badge-success">Selesai</span>';

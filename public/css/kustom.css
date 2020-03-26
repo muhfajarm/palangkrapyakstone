@@ -33,9 +33,9 @@
 @media (min-width: 992px){
 	.line-cart{
 		width: 1px;
-	    height: 24px;
-	    background: #e0e0e0;
-	    margin: 0 5px 0 10px;
+    height: 24px;
+    background: #e0e0e0;
+    margin: auto 5px auto 10px;
 	}
 }
 
@@ -44,6 +44,42 @@
 	}
 }
 
+@media (min-width: 576px){
+  .form-inline{
+    margin-bottom: 10px;
+  }
+}
+
+@media (min-width: 482px){
+  .form-inline .search{
+    width: 355px;
+  }
+}
+@media (min-width: 582px){
+  .form-inline .search{
+    width: 455px;
+  }
+}
+@media (min-width: 682px){
+  .form-inline .search{
+    width: 555px;
+  }
+}
+@media (min-width: 782px){
+  .form-inline .search{
+    width: 665px;
+  }
+}
+@media (min-width: 872px){
+  .form-inline .search{
+    width: 775px;
+  }
+}
+@media (min-width: 982px){
+  .form-inline .search{
+    width: 885px;
+  }
+}
 @media (min-width: 992px){
 	.form-inline .search{
 		width: 350px;

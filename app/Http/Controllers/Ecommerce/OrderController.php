@@ -138,7 +138,7 @@ class OrderController extends Controller
 	    }
 
 	    //UBAH STATUSNYA MENJADI 4
-	    $order->update(['status' => 4]);
+	    $order->update(['status' => 'selesai']);
 	    //REDIRECT KEMBALI DENGAN MENAMPILKAN ALERT SUCCESS
 	    return redirect()->back()->with(['success' => 'Pesanan Dikonfirmasi']);
 	}

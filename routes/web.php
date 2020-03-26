@@ -18,8 +18,9 @@ Route::get('/clear-cache', function() {
 
 Route::get('/', 'Ecommerce\FrontController@index')->name('front.index');
 Route::post('/finish', function(){
-    return redirect()->route('front.index');
+    return redirect()->route('customer.orders');
 })->name('checkout.finish');
+Route::post('/notification/handler', 'Ecommerce\CartController@notificationHandler')->name('notification.handler');
 // Route::get('/cari/', 'Ecommerce\FrontController@cari')->name('front.cari');
 Route::get('/produk/{slug}', 'Ecommerce\FrontController@show')->name('front.show');
 Route::get('/kategori/{slug}', 'Ecommerce\FrontController@categoryProduct')->name('front.category');

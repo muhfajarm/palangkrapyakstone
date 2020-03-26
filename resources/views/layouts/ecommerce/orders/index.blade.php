@@ -6,7 +6,7 @@
 
 @section ('content')
 	<section class="login_box_area p_120">
-		<div class="container">
+		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-3">
 					@include('layouts.ecommerce.module.sidebar')
@@ -51,10 +51,13 @@
 					                                	<span class="badge badge-secondary">{{ $row->pelanggan_no_hp }}</span>
 					                                </td>
 					                                <td>{{ formatRupiah($row->subtotal) }}</td>
-					                               	<td>{!! $row->status_label !!}</td>
+					                               	<td>{!! $row->status_label !!}<br>
+					                               		@if ($row->status == 'dikirim')
+					                               			<label>No Resi : {{ $row->tracking_number }}</label>
+					                               		@endif</td>
 					                                <td>{{ $row->created_at }}</td>
 					                                <td>
-					                                	@if ($row->status != 5)
+					                                	@if ($row->status == 'pending' || $row->status == 'success' || $row->status == 'proses' || $row->status == 'dikirim' || $row->status == 'selesai')
 						                                	<a href="{{ route('customer.view_order', $row->invoice) }}" class="btn btn-primary btn-sm">Detail</a>
 						                                @else
 						                                	<span class="badge badge-danger">Orderan dibatalkan oleh sistem!</span>
@@ -65,8 +68,8 @@
 								    @csrf
 								    <input type="hidden" name="order_id" value="{{ $row->id }}"><br>
 
-								    @if ($row->status == 3 && $row->return_count == 0)
-								        <button class="btn btn-success btn-sm">Terima</button>
+								    @if ($row->status == 'dikirim' && $row->return_count == 'dikirim')
+								        <br><button class="btn btn-success btn-sm">Terima</button>
 								        <!-- TOMBOL UNTUK MENGARAH KE HALAMAN RETURN -->
 								        <a href="{{ route('customer.order_return', $row->invoice) }}" class="btn btn-danger btn-sm mt-1">Return</a>
 								    @endif

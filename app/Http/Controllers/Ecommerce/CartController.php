@@ -282,4 +282,71 @@ class CartController extends Controller
 	    //LOAD VIEW checkout_finish.blade.php DAN PASSING DATA ORDER
 	    return view('layouts.ecommerce.checkout_finish', compact('categories', 'order'));
 	}
+
+	public function notificationHandler(Request $request)
+    {
+        $notif = new Veritrans_Notification();
+        \DB::transaction(function() use($notif) {
+ 
+          $transaction = $notif->transaction_status;
+          $type = $notif->payment_type;
+          $orderId = $notif->order_id;
+          $fraud = $notif->fraud_status;
+          // $order = Order::findOrFail($orderId);
+          $order = Order::where('invoice', $orderId)->first();
+
+          if ($transaction == 'capture') {
+ 
+            // For credit card transaction, we need to check whether transaction is challenge by FDS or not
+            if ($type == 'credit_card') {
+ 
+              if($fraud == 'challenge') {
+                // TODO set payment status in merchant's database to 'Challenge by FDS'
+                // TODO merchant should decide whether this transaction is authorized or not in MAP
+                // $donation->addUpdate("Transaction order_id: " . $orderId ." is challenged by FDS");
+                $order->setPending();
+              } else {
+                // TODO set payment status in merchant's database to 'Success'
+                // $donation->addUpdate("Transaction order_id: " . $orderId ." successfully captured using " . $type);
+                $order->setSuccess();
+              }
+ 
+            }
+ 
+          } elseif ($transaction == 'settlement') {
+ 
+            // TODO set payment status in merchant's database to 'Settlement'
+            // $donation->addUpdate("Transaction order_id: " . $orderId ." successfully transfered using " . $type);
+            $order->setSuccess();
+ 
+          } elseif($transaction == 'pending'){
+ 
+            // TODO set payment status in merchant's database to 'Pending'
+            // $donation->addUpdate("Waiting customer to finish transaction order_id: " . $orderId . " using " . $type);
+            $order->setPending();
+ 
+          } elseif ($transaction == 'deny') {
+ 
+            // TODO set payment status in merchant's database to 'Failed'
+            // $donation->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is Failed.");
+            $order->setFailed();
+ 
+          } elseif ($transaction == 'expire') {
+ 
+            // TODO set payment status in merchant's database to 'expire'
+            // $donation->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is expired.");
+            $order->setExpired();
+ 
+          } elseif ($transaction == 'cancel') {
+ 
+            // TODO set payment status in merchant's database to 'Failed'
+            // $donation->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is canceled.");
+            $order->setFailed();
+ 
+          }
+ 
+        });
+ 
+        return;
+    }
 }

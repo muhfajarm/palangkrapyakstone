@@ -116,9 +116,9 @@ class OrderController extends Controller
         //MENGAMBIL DATA CUSTOMER BERDASARKAN INVOICE
         $order = Order::with(['payment'])->where('invoice', $invoice)->first();
         //UBAH STATUS DI TABLE PAYMENTS MELALUI ORDER YANG TERKAIT
-        $order->payment()->update(['status' => 1]);
+        // $order->payment()->update(['status' => 1]);
         //UBAH STATUS ORDER MENJADI PROSES
-        $order->update(['status' => 2]);
+        $order->update(['status' => 'proses']);
         //REDIRECT KE HALAMAN YANG SAMA.
         return redirect(route('orders.view', $order->invoice));
     }
@@ -128,7 +128,7 @@ class OrderController extends Controller
         //MENGAMBIL DATA ORDER BERDASARKAN ID
         $order = Order::with(['pelanggan'])->find($request->order_id);
         //UPDATE DATA ORDER DENGAN MEMASUKKAN NOMOR RESI DAN MENGUBAH STATUS MENJADI DIKIRIM
-        $order->update(['tracking_number' => $request->tracking_number, 'status' => 3]);
+        $order->update(['tracking_number' => $request->tracking_number, 'status' => 'dikirim']);
         //KIRIM EMAIL KE PELANGGAN TERKAIT
         // Mail::to($order->customer->email)->send(new OrderMail($order));
         //REDIRECT KEMBALI
@@ -146,7 +146,7 @@ class OrderController extends Controller
         $this->validate($request, ['status' => 'required']); //validasi status
         $order = Order::find($request->order_id); //query berdasarkan order_id
         $order->return()->update(['status' => $request->status]); //update status yang ada di table order_returns melalui order
-        $order->update(['status' => 4]); //update status yang ada di table orders
+        $order->update(['status' => 'diterima']); //update status yang ada di table orders
         return redirect()->back();
     }
 }
