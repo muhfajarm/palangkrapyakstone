@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use DB;
+use Veritrans_Config;
+use Veritrans_Snap;
+use Veritrans_Notification;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 use App\Product;
 use App\Category;
@@ -16,9 +20,6 @@ use App\Customer;
 use App\User;
 use App\Order;
 use App\OrderDetail;
-use Veritrans_Config;
-use Veritrans_Snap;
-use Veritrans_Notification;
 
 class CartController extends Controller
 {
@@ -318,6 +319,8 @@ class CartController extends Controller
             // TODO set payment status in merchant's database to 'Settlement'
             // $donation->addUpdate("Transaction order_id: " . $orderId ." successfully transfered using " . $type);
             $order->setSuccess();
+
+            $this->sendMessageOrder('#' . $order->invoice);
  
           } elseif($transaction == 'pending'){
  
@@ -349,4 +352,15 @@ class CartController extends Controller
  
         return;
     }
+
+    private function sendMessageOrder($order_id)
+	{
+		$text = 'Hai PalangKrapyakStone, OrderID ' . $order_id . ' Sudah Melakukan Pembayaran, Segera Dicek Ya!';
+ 
+        Telegram::sendMessage([
+            'chat_id' => env('TELEGRAM_CHANNEL_ID', '360510294'),
+            'parse_mode' => 'HTML',
+            'text' => $text
+        ]);
+	}
 }
