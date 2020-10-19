@@ -19,6 +19,9 @@
 </main>
 @endsection
 
+@section('js')
+    @include('js')
+@endsection
 {{-- @section('js')
     <script type="text/javascript">
         let page = 1;

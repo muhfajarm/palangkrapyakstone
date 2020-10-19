@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2020 at 07:07 AM
+-- Generation Time: Mar 26, 2020 at 09:05 AM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.3.0
 
@@ -649,7 +649,7 @@ CREATE TABLE `orders` (
   `pelanggan_alamat` varchar(100) DEFAULT NULL,
   `city_id` int(10) UNSIGNED DEFAULT NULL,
   `subtotal` int(11) DEFAULT NULL,
-  `status` char(1) NOT NULL DEFAULT '0' COMMENT '''0: new, 1: confirm, 2: process, 3: shipping, 4: done''',
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
   `snap_token` varchar(255) DEFAULT NULL,
   `tracking_number` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -865,7 +865,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `admin`, `nama`, `email`, `password`, `no_hp`, `alamat`, `city_id`, `status`) VALUES
 (1, 1, 'Admin', 'admin@admin.com', '$2y$10$seO7RaH2B/cPov471FDb4ejg0BftqxYt5OI17xO2UxtUAwpYqDM9e', '+6285290469554', 'Gg. Pace No. 04 Kp. Todangsan, Tonggalan, Klaten Tengah', 196, 0),
 (2, 0, 'Muhammad Fajar Maqidi', 'muh.fajar12642@gmail.com', '$2y$10$NS3Ky0OTmTV0WGoS4vltVu0zlhl2Ei4sIA9NdFTe07aJRX4EUvLLO', '+6285290469554', 'Gg. Pace No. 04 Kp. Todangsan, Tonggalan, Klaten Tengah', 196, 0),
-(3, 0, 'Beng beng', 'bengbengfajar@gmail.com', '$2y$10$K.yB0u.AurlrIdHh8K4m5ec1jvFZnUlrRgj76tO4FuZcd7ma6J5uK', '085290469554', 'Gg. Pace No. 04 Kp. Todangsan, Tonggalan, Klaten Tengah', 154, 0);
+(3, 0, 'Beng beng', 'bengbengfajar@gmail.com', '$2y$10$K.yB0u.AurlrIdHh8K4m5ec1jvFZnUlrRgj76tO4FuZcd7ma6J5uK', '+6285290469554', 'Gg. Pace No. 04 Kp. Todangsan, Tonggalan, Klaten Tengah', 196, 0);
 
 --
 -- Indexes for dumped tables

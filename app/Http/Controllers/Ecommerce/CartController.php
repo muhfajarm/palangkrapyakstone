@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use DB;
+use Kavist\RajaOngkir\Facades\RajaOngkir;
 use Veritrans_Config;
 use Veritrans_Snap;
 use Veritrans_Notification;
@@ -20,6 +21,7 @@ use App\Customer;
 use App\User;
 use App\Order;
 use App\OrderDetail;
+use App\Courier;
 
 class CartController extends Controller
 {
@@ -38,7 +40,7 @@ class CartController extends Controller
 
 	private function getCarts()
 	{
-		$carts = json_decode(request()->cookie('dw-carts'), true);
+		$carts = json_decode(request()->cookie('mbs-carts'), true);
 	    $carts = $carts != '' ? $carts:[];
 	    return $carts;
 	}
@@ -54,63 +56,132 @@ class CartController extends Controller
 	    $carts = $this->getCarts();
 
 	    //CEK JIKA CARTS TIDAK NULL DAN PRODUCT_ID ADA DIDALAM ARRAY CARTS
-	    if ($carts && array_key_exists($request->produk_id, $carts)) {
+	    if ($carts && array_key_exists($this->request->produk_id, $carts)) {
 	        //MAKA UPDATE QTY-NYA BERDASARKAN PRODUCT_ID YANG DIJADIKAN KEY ARRAY
-	        $carts[$request->produk_id]['jumlah'] += $request->jumlah;
+	        $carts[$this->request->produk_id]['jumlah'] += $this->request->jumlah;
 	    } else {
 	        //SELAIN ITU, BUAT QUERY UNTUK MENGAMBIL PRODUK BERDASARKAN PRODUCT_ID
-	        $products = Product::find($request->produk_id);
+	        $products = Product::find($this->request->produk_id);
 	        //TAMBAHKAN DATA BARU DENGAN MENJADIKAN PRODUCT_ID SEBAGAI KEY DARI ARRAY CARTS
-	        $carts[$request->produk_id] = [
-	            'jumlah' => $request->jumlah,
-	            'produk_id' => $products->id,
-	            'produk_nama' => $products->nama,
-	            'harga_produk' => $products->harga_jual_3,
-	            'gambar_produk' => $products->image
+	        $carts[$this->request->produk_id] = [
+	            'jumlah' => $this->request->jumlah,
+	            'produk_id' => $this->request->produk_id,
+	            'produk_nama' => $this->request->produk_nama,
+	            'harga_produk' => $this->request->harga_produk,
+	            'gambar_produk' => $this->request->gambar_produk,
+	            'berat' => $this->request->berat,
+	            'stok' => $this->request->stok
 	        ];
 	    }
 
 	    //BUAT COOKIE-NYA DENGAN NAME DW-CARTS
 	    //JANGAN LUPA UNTUK DI-ENCODE KEMBALI, DAN LIMITNYA 2800 MENIT ATAU 48 JAM
-	    $cookie = cookie('dw-carts', json_encode($carts), 2880);
+	    $cookie = cookie('mbs-carts', json_encode($carts), 2880);
 	    //STORE KE BROWSER UNTUK DISIMPAN
 	    return redirect()->back()->cookie($cookie);
 	}
 
+	public function getListcart()
+	{
+		$carts = $this->getCarts();
+
+		$totalcart = collect($carts)->sum(function($q) {
+	    	return $q['jumlah'];
+	    	});
+		$total = collect($carts)->sum(function($q) {
+	        return $q['jumlah'] * $q['harga_produk'];
+	    });
+
+	    return response()->json(['status' => 'success', 'data' => $carts]);
+	}
+
 	public function listCart()
 	{
-		$categories = Category::All();
+		$categories = Category::orderBy('nama', 'ASC')->get();
 
 	    //MENGAMBIL DATA DARI COOKIE
 	    $carts = $this->getCarts();
+	    $totalcart = collect($carts)->sum(function($q) {
+	    	return $q['jumlah'];
+	    	});
 	    //UBAH ARRAY MENJADI COLLECTION, KEMUDIAN GUNAKAN METHOD SUM UNTUK MENGHITUNG SUBTOTAL
-	    $subtotal = collect($carts)->sum(function($q) {
+	    $total = collect($carts)->sum(function($q) {
 	        return $q['jumlah'] * $q['harga_produk']; //SUBTOTAL TERDIRI DARI QTY * PRICE
 	    });
+	    
 	    //LOAD VIEW CART.BLADE.PHP DAN PASSING DATA CARTS DAN SUBTOTAL
-	    return view('layouts.ecommerce.cart', compact('categories', 'carts', 'subtotal'));
+	    return view('layouts.ecommerce.cart', compact('categories', 'carts', 'totalcart', 'total'));
+	}
+
+	public function decreaseqty(Request $request, $produk_id)
+	{
+		$carts = $this->getCarts();
+
+		$id_produk = $this->request->produk_id;
+		foreach ($id_produk as $key => $row) {
+			$te = $carts[$row]['jumlah'];
+		    // $test = (int)$carts->produk_id->jumlah;
+		    $kurang = $request->qty;
+		    $hitung = $te - $kurang;
+
+		    return response()->json(['status' => 'success', 'html' => $hitung]);
+		}
+	}
+
+	public function updateqty(Request $request)
+	{
+		$carts = $this->getCarts();
+
+		// foreach ($request->id_produk as $key => $row) {
+		// 	$carts[$key]['jumlah'] = $request->new_quantity;
+		// }
+
+		$t = $carts[$request->id_produk]['jumlah'] = $request->new_quantity;
+
+		$cookie = cookie('mbs-carts', json_encode($carts), 2880);
+
+		// return response()->json(['status' => 'success', 'data' => $t]);
+		return redirect()->back()->cookie($cookie);
 	}
 
 	public function updateCart(Request $request)
 	{
-		//AMBIL DATA DARI COOKIE
 	    $carts = $this->getCarts();
-	    //KEMUDIAN LOOPING DATA PRODUCT_ID, KARENA NAMENYA ARRAY PADA VIEW SEBELUMNYA
-	    //MAKA DATA YANG DITERIMA ADALAH ARRAY SEHINGGA BISA DI-LOOPING
-	    foreach ($request->produk_id as $key => $row) {
-	        //DI CHECK, JIKA QTY DENGAN KEY YANG SAMA DENGAN PRODUCT_ID = 0
-	        if ($request->jumlah[$key] == 0) {
-	            //MAKA DATA TERSEBUT DIHAPUS DARI ARRAY
-	            unset($carts[$row]);
-	        } else {
-	            //SELAIN ITU MAKA AKAN DIPERBAHARUI
-	            $carts[$row]['jumlah'] = $request->jumlah[$key];
-	        }
-	    }
-	    //SET KEMBALI COOKIE-NYA SEPERTI SEBELUMNYA
-	    $cookie = cookie('dw-carts', json_encode($carts), 2880);
-	    //DAN STORE KE BROWSER.
-	    return redirect()->back()->cookie($cookie);
+		$produk_id = $this->request->produk_id;
+
+		foreach ($carts as $key => $value) {
+			if ($carts[$key]['produk_id'] == $produk_id) {
+				unset($carts[$key]);
+				$cookie = cookie('mbs-carts', json_encode($carts), 2880);
+				return redirect()->back()->cookie($cookie);
+			}
+		}
+	}
+
+	public function removeCart(Request $request)
+	{
+		$carts = $this->getCarts();
+		$produk_id = $this->request->produk_id;
+		
+		// foreach ($this->request->arrproduk_id as $key => $row) {
+	        // if ($this->request->produk_id == $this->request->produk_id) {
+	            // unset($carts[$row]);
+	        // } else {
+	        	// return false;
+	        // }
+	    // }
+
+		$cookie = cookie('mbs-carts', NULL, 2880);
+		// $product = $this->request->produk_id;
+
+		return redirect()->back()->cookie($cookie);
+
+		// foreach ($this->request->produk_id as $key => $row) {
+		// 	if ($request->jumlah[$key] == 0) {
+	 //            //MAKA DATA TERSEBUT DIHAPUS DARI ARRAY
+	 //            unset($carts[$row]);
+	 //        }
+		// }
 	}
 
 	public function checkout()
@@ -125,12 +196,21 @@ class CartController extends Controller
 	    $subtotal = collect($carts)->sum(function($q) {
 	        return $q['jumlah'] * $q['harga_produk'];
 	    });
+
+	    $totalcart = collect($carts)->sum(function($q) {
+	    	return $q['jumlah'];
+	    	});
+
+	    $weight = collect($carts)->sum(function($q) {
+	        return $q['jumlah'] * $q['berat'];
+	    });
+
 	    //ME-LOAD VIEW CHECKOUT.BLADE.PHP DAN PASSING DATA PROVINCES, CARTS DAN SUBTOTAL
 	    // return $provinces;
 	    if ($carts == null)
 	    	return redirect()->route('front.index')->with(['error' => 'Keranjang Belanja Kosong! Harap Belanja Terlebih Dahulu']);
 	    else
-		    return view('layouts.ecommerce.checkout', compact('categories', 'customer', 'provinces', 'carts', 'subtotal'));
+		    return view('layouts.ecommerce.checkout', compact('categories', 'customer', 'provinces', 'carts', 'subtotal', 'totalcart', 'weight'));
 	   
 	}
 
@@ -150,6 +230,26 @@ class CartController extends Controller
 	//     return response()->json(['status' => 'success', 'data' => $districts]);
 	// }
 
+    public function getCourier()
+    {
+        $courier = Courier::orderBy('title', 'ASC')->get();
+        return response()->json($courier);
+    }
+
+    public function getOngkir($origin, $destination, $weight, $courier)
+    {
+    	$costs = RajaOngkir::ongkosKirim([
+            'origin'        => 196,
+            'destination'   => $destination,
+            'weight'        => $weight,
+            'courier'       => $courier,
+        ])->get();
+
+        return $costs;
+
+        // return json_encode($costs);
+    }
+
 	public function processCheckout(Request $request)
 	{
 		// VALIDASI DATANYA
@@ -160,7 +260,9 @@ class CartController extends Controller
 	        'province_id' => 'required|exists:provinces,id',
 	        'city_id' => 'required|exists:cities,id',
 	        // 'district_id' => 'required|exists:districts,id',
-	        'alamat' => 'required|string'
+	        'alamat' => 'required|string',
+	        'jasa_ekspedisi' => 'required',
+	        'total' => 'required'
 	    ]);
 
 	    //INISIASI DATABASE TRANSACTION
@@ -184,20 +286,22 @@ class CartController extends Controller
 	            return $q['jumlah'] * $q['harga_produk'];
 	        });
 
+	        $total = $this->request->total;
+
 	        $user = auth()->user();
 	        $data = $request->only(['no_hp', 'alamat', 'city_id']);
 	        $user->update($data);
 	        // return $data;
 
 	        //SIMPAN DATA CUSTOMER
-	        $customer = Customer::create([
-	            'nama' => $this->request->nama,
-	            'email' => $this->request->email,
-	            'no_hp' => $this->request->no_hp,
-	            'alamat' => $this->request->alamat,
-	            'city_id' => $this->request->city_id,
-	            'status' => false
-	        ]);
+	        // $customer = Customer::create([
+	        //     'nama' => $this->request->nama,
+	        //     'email' => $this->request->email,
+	        //     'no_hp' => $this->request->no_hp,
+	        //     'alamat' => $this->request->alamat,
+	        //     'city_id' => $this->request->city_id,
+	        //     'status' => false
+	        // ]);
 
 	        //SIMPAN DATA ORDER
 	        $pelangganid = auth()->user()->id;
@@ -208,13 +312,25 @@ class CartController extends Controller
 	            'pelanggan_no_hp' => $this->request->no_hp,
 	            'pelanggan_alamat' => $this->request->alamat,
 	            'city_id' => $this->request->city_id,
-	            'subtotal' => $subtotal
+	            'subtotal' => $subtotal,
+	            'ongkir' => $this->request->ongkir,
+	            'total' => $total,
+	            'jasa_ekspedisi' => $this->request->jasa_ekspedisi
 	        ]);
+
+	        foreach($carts as $pro) {
+				$products = Product::where('id',  $pro['produk_id']);
+			    $products->decrement('stok', $pro['jumlah']);
+			    $products->increment('dibeli', $pro['jumlah']);
+			}
 
 	        //LOOPING DATA DI CARTS
 	        foreach ($carts as $row) {
 	            //AMBIL DATA PRODUK BERDASARKAN PRODUCT_ID
 	            $product = Product::find($row['produk_id']);
+	            // $product->update([
+	            	// 'stok' => $tstok
+	            // ]);
 	            //SIMPAN DETAIL ORDER
 	            OrderDetail::create([
 	                'order_id' => $order->id,
@@ -228,28 +344,28 @@ class CartController extends Controller
 	        // Buat transaksi ke midtrans kemudian save snap tokennya.
 	        $transaction_details = [
 		        'order_id'      => $order->invoice,
-                'gross_amount'  => $subtotal,
+                'gross_amount'  => $total,
 	        ];
 	        $customer_details = [
 		        'first_name'    => $this->request->nama,
                 'email'         => $this->request->email,
             ];
-            $item_details = [];
+            // $item_details = [];
 
 	        $payload = [
 	            'transaction_details' => $transaction_details,
 	            'customer_details' => $customer_details,
-	            'item_details' => $item_details,
+	            // 'item_details' => $item_details,
 	        ];
 
-            foreach ($carts as $cart) {
-            	$payload['item_details'][] = [
-            		'id'       => $cart['produk_id'],
-            		'price'    => $cart['harga_produk'],
-            		'quantity' => $cart['jumlah'],
-            		'name'     => $cart['produk_nama'],
-            	];
-            }
+            // foreach ($carts as $cart) {
+            // 	$payload['item_details'][] = [
+            // 		'id'       => $cart['produk_id'],
+            // 		'price'    => $cart['harga_produk'],
+            // 		'quantity' => $cart['jumlah'],
+            // 		'name'     => $cart['produk_nama'],
+            // 	];
+            // }
 	        $snapToken = Veritrans_Snap::getSnapToken($payload);
 	        $order->snap_token = $snapToken;
 	        $order->save();
@@ -262,7 +378,7 @@ class CartController extends Controller
 
 	        $carts = [];
 	        //KOSONGKAN DATA KERANJANG DI COOKIE
-	        $cookie = cookie('dw-carts', json_encode($carts), 2880);
+	        $cookie = cookie('mbs-carts', json_encode($carts), 2880);
 	        //REDIRECT KE HALAMAN FINISH TRANSAKSI
 	        return response()->json($this->response)->cookie($cookie);
 	        // return redirect(route('front.finish_checkout', $order->invoice))->cookie($cookie);

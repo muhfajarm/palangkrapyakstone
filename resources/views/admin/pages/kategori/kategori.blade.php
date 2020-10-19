@@ -19,6 +19,9 @@
 	<div class="box">
 		<div class="box-header">
 			<h3 class="box-title">Semua Kategori</h3>
+			<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#ModalTambahKategori">
+		+ Tambah Kategori Baru
+	</button>
 		</div>
 		<div class="box-body">
 			<div class="table-responsive">
@@ -51,10 +54,6 @@
 			</div>
 		</div>
 	</div>
-
-	<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#ModalTambahKategori">
-		+ Tambah Kategori Baru
-	</button>
 
 	{{-- Modal Tambah --}}
 	<div class="modal fade" id="ModalTambahKategori" tabindex="-1" role="dialog" aria-labelledby="LabelJudul" aria-hidden="true">

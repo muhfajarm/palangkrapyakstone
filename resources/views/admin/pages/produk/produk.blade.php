@@ -42,7 +42,7 @@
 						@foreach($products as $product)
 						<tr>
 							<td>
-								<img class="float-left" src="{{ asset('storage/products/' . $product->image) }}" height="170px" width="170px" alt="{{ $product->nama }}">
+								<img class="float-left" src="{{ asset('storage/products/' . $product->gambar) }}" height="170px" width="170px" alt="{{ $product->nama }}">
 							</td>
 							<td>{{ $product->nama }}</td>
 							<td>
@@ -50,20 +50,20 @@
 									Kategori : <span class="badge badge-light">{{ $product->category->nama }}</span>
 								</label>
 								<br>
-								<label class="mt-2 ml-2">
+								{{-- <label class="mt-2 ml-2">
 									Harga Beli : <span class="badge badge-warning">{{ formatRupiah($product->harga_beli) }}</span>
 								</label>
-								<br>
-								<label class="mt-2 ml-2">
+								<br> --}}
+								{{-- <label class="mt-2 ml-2">
 									Harga Jual 1 : <span class="badge badge-secondary">{{ formatRupiah($product->harga_jual_1) }}</span>
 								</label>
 								<br>
 								<label class="mt-2 ml-2">
 									Harga Jual 2 : <span class="badge badge-secondary">{{ formatRupiah($product->harga_jual_2) }}</span>
 								</label>
-								<br>
+								<br> --}}
 								<label class="mt-2 ml-2">
-									Harga Jual 3 : <span class="badge badge-secondary">{{ formatRupiah($product->harga_jual_3) }}</span>
+									Harga Jual : <span class="badge badge-secondary">{{ formatRupiah($product->harga) }}</span>
 								</label>
 
 							</td>
@@ -72,10 +72,10 @@
 							<td>{{ $product->berat }}Kg</td>
 							<td>{{ $product->dibeli }}</td>
 							<td><center>
-								<button type="button" class="btn btn-xs btn-success glyphicon glyphicon-pencil" data-input_id="{{ $product->id }}" data-btn_nama="{{ $product->nama }}" data-btn_id_kategori="{{ $product->category_id }}" data-btn_slug="{{ $product->slug }}" data-btn_deskripsi="{{ $product->deskripsi }}" data-btn_harga_beli="{{ $product->harga_beli }}"
+								<button type="button" class="btn btn-xs btn-success glyphicon glyphicon-pencil" data-input_id="{{ $product->id }}" data-btn_nama="{{ $product->nama }}" data-btn_id_kategori="{{ $product->category_id }}" data-btn_slug="{{ $product->slug }}" data-btn_deskripsi="{{ $product->deskripsi }}" {{-- data-btn_harga_beli="{{ $product->harga_beli }}"
 								data-btn_harga_jual_1="{{ $product->harga_jual_1 }}"
-								data-btn_harga_jual_2="{{ $product->harga_jual_2 }}"
-								data-btn_harga_jual_3="{{ $product->harga_jual_3 }}" data-btn_stok="{{ $product->stok }}" data-btn_berat="{{ $product->berat }}" data-btn_gambar="{{ $product->image }}" data-btn_dibeli="{{ $product->dibeli }}" data-toggle="modal" data-target="#ModalEditProduk"></button>
+								data-btn_harga_jual_2="{{ $product->harga_jual_2 }}" --}}
+								data-btn_harga="{{ $product->harga }}" data-btn_stok="{{ $product->stok }}" data-btn_berat="{{ $product->berat }}" data-btn_gambar="{{ $product->gambar }}" data-btn_dibeli="{{ $product->dibeli }}" data-toggle="modal" data-target="#ModalEditProduk"></button>
 
 								<br><br>
 

@@ -57,11 +57,11 @@
                     <tbody>
                         @forelse ($orders as $row)
                         <tr>
-                            <td><strong>{{ $row->invoice }}</strong></td>
+                            <td><a href="{{ route('orders.view', $row->invoice) }}"><strong>{{ $row->invoice }}</strong></td>
                             <td>
                                 <strong>{{ $row->pelanggan_nama }}</strong><br>
                                 <label><strong>Telp:</strong> {{ $row->pelanggan_no_hp }}</label><br>
-                                <label><strong>Alamat:</strong> {{ $row->pelanggan_alamat }} - {{  $row->pelanggan->city->nama}}, {{ $row->pelanggan->city->province->nama }}</label>
+                                <label><strong>Alamat:</strong> {{ $row->pelanggan_alamat }}, {{  $row->pelanggan->city->title}}, {{ $row->pelanggan->city->province->title }}</label>
                             </td>
                             <td>{{ formatRupiah($row->subtotal) }}</td>
                             <td>{{ $row->created_at->format('d-m-Y') }}</td>

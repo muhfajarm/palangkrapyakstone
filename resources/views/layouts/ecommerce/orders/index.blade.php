@@ -54,10 +54,14 @@
 					                               	<td>{!! $row->status_label !!}<br>
 					                               		@if ($row->status == 'dikirim')
 					                               			<label>No Resi : {{ $row->tracking_number }}</label>
-					                               		@endif</td>
+					                               		@endif
+					                               		@if ($row->return['status'] == '3')
+					                               			<label>No Resi Return : {{ $row->return['tracking_number'] }}</label>
+					                               		@endif
+					                               	</td>
 					                                <td>{{ $row->created_at }}</td>
 					                                <td>
-					                                	@if ($row->status == 'pending' || $row->status == 'success' || $row->status == 'proses' || $row->status == 'dikirim' || $row->status == 'selesai')
+					                                	@if ($row->status == 'pending' || $row->status == 'success' || $row->status == 'proses' || $row->status == 'dikirim' || $row->status == 'diterima' || $row->status == 'selesai')
 						                                	<a href="{{ route('customer.view_order', $row->invoice) }}" class="btn btn-primary btn-sm">Detail</a>
 						                                @else
 						                                	<span class="badge badge-danger">Orderan dibatalkan oleh sistem!</span>
@@ -74,6 +78,13 @@
 								        <a href="{{ route('customer.order_return', $row->invoice) }}" class="btn btn-danger btn-sm mt-1">Return</a>
 								    @endif
 								</form>
+								{{-- <form action="{{ route('customer.return_accept') }}" class="form-inline" method="post">
+									@csrf
+									<input type="hidden" name="order_id" value="{{ $row->id }}"><br>
+								    @if ($row->status == 'diterima' && $row->return->status == 3)
+								        <br><button class="btn btn-success btn-sm">Return Diterima</button>
+								    @endif
+								</form> --}}
 					                                </td>
 					                            </tr>
 					                            @empty

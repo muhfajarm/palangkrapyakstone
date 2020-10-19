@@ -22,25 +22,35 @@ Route::post('/finish', function(){
 })->name('checkout.finish');
 Route::post('/notification/handler', 'Ecommerce\CartController@notificationHandler')->name('notification.handler');
 // Route::get('/cari/', 'Ecommerce\FrontController@cari')->name('front.cari');
-Route::get('/produk/{slug}', 'Ecommerce\FrontController@show')->name('front.show');
-Route::get('/kategori/{slug}', 'Ecommerce\FrontController@categoryProduct')->name('front.category');
-Route::post('/produk/{slug}', 'Ecommerce\FrontController@submit');
-Route::get('/api/city', 'Ecommerce\CartController@getCity');
+Route::get('/p/{slug}', 'Ecommerce\FrontController@show')->name('front.show');
+Route::get('/k/{slug}', 'Ecommerce\FrontController@categoryProduct')->name('front.category');
+Route::get('/api/getPopover', 'Ecommerce\FrontController@getPopover');
+Route::get('/api/cityF', 'Ecommerce\FrontController@getCity');
+Route::get('/api/costF', 'Ecommerce\FrontController@getCourier');
+Route::post('/origin={city_origin}&destination={city_destination}&weight={weight}&courier={courier}','Ecommerce\FrontController@getOngkir');
+Route::get('/api/cityC', 'Ecommerce\CartController@getCity');
+Route::get('/api/costC', 'Ecommerce\CartController@getCourier');
 // Route::get('/kategori/{id}', 'Ecommerce\FrontController@categoryProduct')->name('front.category');
+Route::post('/addcart', 'Ecommerce\CartController@addToCart')->name('front.cart');
+Route::get('/lcart', 'Ecommerce\CartController@getListcart')->name('front.get_listcart');
+Route::get('/c', 'Ecommerce\CartController@listCart')->name('front.list_cart');
+Route::post('/cart/update/{produk_id}', 'Ecommerce\CartController@decreaseqty')->name('front.decreaseqty');
+Route::post('/c/qty', 'Ecommerce\CartController@updateqty');
+Route::post('/c/update', 'Ecommerce\CartController@updateCart')->name('front.update_cart');
+Route::post('/c/remove', 'Ecommerce\CartController@removeCart')->name('front.remove_cart');
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 Route::group(['middleware' => 'auth'], function() {
-	Route::post('cart', 'Ecommerce\CartController@addToCart')->name('front.cart');
-	Route::get('/cart', 'Ecommerce\CartController@listCart')->name('front.list_cart');
-	Route::post('/cart/update', 'Ecommerce\CartController@updateCart')->name('front.update_cart');
+	// Route::post('/produk/cart', 'Ecommerce\CartController@addToCart');
 	Route::get('/checkout', 'Ecommerce\CartController@checkout')->name('front.checkout');
+	Route::post('/checkout/origin={city_origin}&destination={city_destination}&weight={weight}&courier={courier}','Ecommerce\CartController@getOngkir');
 	// Route::get('/api/city', 'Ecommerce\CartController@getCity');
 	// Route::get('/api/district', 'Ecommerce\CartController@getDistrict');
 	Route::post('/checkout', 'Ecommerce\CartController@processCheckout')->name('front.store_checkout');
 	Route::get('/checkout/{invoice}', 'Ecommerce\CartController@checkoutFinish')->name('front.finish_checkout');
 });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home')->middleware('verified');
 
 Route::group(['prefix' => 'member', 'namespace' => 'Ecommerce'], function() {
 	Route::group(['middleware' => 'auth'], function() {
@@ -51,15 +61,17 @@ Route::group(['prefix' => 'member', 'namespace' => 'Ecommerce'], function() {
 		Route::post('orders/accept', 'OrderController@acceptOrder')->name('customer.order_accept');
 		Route::get('orders/return/{invoice}', 'OrderController@returnForm')->name('customer.order_return');
 		Route::put('orders/return/{invoice}', 'OrderController@processReturn')->name('customer.return');
+		Route::post('orders/return/accept', 'OrderController@acceptReturn')->name('customer.return_accept');
 		Route::get('payment/{invoice}', 'OrderController@paymentForm')->name('customer.paymentForm');
 		Route::post('payment', 'OrderController@storePayment')->name('customer.savePayment');
 		Route::get('setting', 'FrontController@customerSettingForm')->name('customer.settingForm');
 		Route::post('setting', 'FrontController@customerUpdateProfile')->name('customer.setting');
+		// Route::get('setting/email/verifikasi', 'VerifikasiController@verifikasiEmail')->name('customer.verifikasiEmail');
 	});
 });
 
 Route::group(['prefix' => 'admin'], function() {
-	Route::group(['middleware' => ['auth','cekadmin:1']], function() {
+	Route::group(['middleware' => ['auth','cekadmin:1','verified']], function() {
 	    Route::get('/', 'KontenController@index');
 	    Route::resource('user','UserController');
 		Route::resource('kategori','CategoryController');
@@ -78,6 +90,7 @@ Route::group(['prefix' => 'admin'], function() {
 		    Route::post('/shipping', 'OrderController@shippingOrder')->name('orders.shipping');
 		    Route::get('/return/{invoice}', 'OrderController@return')->name('orders.return');
 			Route::post('/return', 'OrderController@approveReturn')->name('orders.approve_return');
+			Route::post('/return/shipping', 'OrderController@shippingReturn')->name('orders.shipping_return');
 		});
 		Route::group(['prefix' => 'reports'], function() {
 		    Route::get('/order', 'ReportController@orderReport')->name('report.order');

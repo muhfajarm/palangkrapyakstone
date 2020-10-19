@@ -17,7 +17,11 @@ class OrderReturn extends Model
             return '<span class="badge badge-secondary">Menunggu Konfirmasi</span>';
         } elseif ($this->status == 2) {
             return '<span class="badge badge-danger">Ditolak</span>';
+        } elseif ($this->status == 3) {
+            return '<span class="badge badge-warning">Dikirim</span>';
+        } elseif ($this->status == 4) {
+            return '<span class="badge badge-success">Diterima oleh Pelanggan</span>';
         }
-        return '<span class="badge badge-success">Selesai</span>';
+        return '<span class="badge badge-success">Diterima</span>';
     }
 }

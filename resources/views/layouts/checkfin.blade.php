@@ -17,34 +17,40 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('css/loading.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/kustom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/nice-select.css') }}">
+    {{-- Select2 --}}
+    <link rel="stylesheet" href="{{ asset('bower_components/select2/dist/css/select2.min.css') }}">
+
 </head>
-<body onload="myFunction()" class="coverBg">
+<body onload="myFunction()">
   <div id="loader"></div>
   <div style="display:none;" id="myDiv" class="animate-bottom">
   <header class="mb-3">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="{{ route('front.index') }}">Palang Krapyak Stone</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" style="margin-bottom: 10px;">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </nav>
   </header>
 
   {{-- Content --}}
   @yield('content')
 
+  {{-- JS --}}
+  {{-- <script src="{{ asset('js/theme.js') }}"></script> --}}
+  {{-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script> --}}
   <script src="{{ asset('js/jquery.min.js') }}"></script>
+  <script src="{{ asset('js/jquery.nice-select.js') }}"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <script>
-    var myVar;
+  
+  @yield('js')
+  @yield('snap')
 
-    function myFunction() {
-        myVar = setTimeout(showPage, 500);
-    }
-
-    function showPage() {
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("myDiv").style.display = "block";
-    }
-  </script>
+  {{-- Select2 --}}
+    <script src="{{ asset('bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('js/select2.js') }}"></script>
 </body>
 </html>

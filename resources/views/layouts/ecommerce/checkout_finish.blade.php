@@ -20,6 +20,11 @@
                   				</a>
 							</li>
 							<li>
+								<a href="#">Pengiriman
+									<span>{{ formatRupiah($order->$costs[0]['costs'][0]['cost'][0]['value']) }}</span>
+								</a>
+							</li>
+							<li>
 								<a href="#">
                   					<span>Total</span> : {{ formatRupiah($order->subtotal) }}
                   				</a>

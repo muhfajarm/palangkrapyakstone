@@ -119,7 +119,7 @@
                                             <td>{{ $row->produk->nama }}</td>
                                             <td>{{ $row->jumlah }}</td>
                                             <td>{{ formatRupiah($row->harga) }}</td>
-                                            <td>{{ $row->berat }} gr</td>
+                                            <td>{{ $row->berat }} gram</td>
                                             <td>{{ formatRupiah($row->jumlah * $row->harga) }}</td>
                                         </tr>
                                         @endforeach

@@ -1,7 +1,7 @@
     <aside class="main-sidebar">
       <section class="sidebar">
         <!-- search form (Optional) -->
-        <form action="#" method="get" class="sidebar-form">
+        {{-- <form action="#" method="get" class="sidebar-form">
           <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Cari...">
             <span class="input-group-btn">
@@ -9,7 +9,7 @@
                 </button>
               </span>
           </div>
-        </form>
+        </form> --}}
         <!-- /.search form -->
 
         <!-- Sidebar Menu -->
@@ -22,11 +22,11 @@
           <li class="header">SIDEBAR</li>
           <!-- Optionally, you can add icons to the links -->
           {{-- <li class="{{set_active('admin/kategori')}}"> --}}
-          <li class="{{set_active('user.index')}}">
+          {{-- <li class="{{set_active('user.index')}}">
             <a href="{{route('user.index')}}">
               <i class="glyphicon glyphicon-th-list"></i> <span>User</span>
             </a>
-          </li>
+          </li> --}}
           <li class="{{set_active('kategori.index')}}">
             <a href="{{route('kategori.index')}}">
               <i class="glyphicon glyphicon-th-list"></i> <span>Kategori</span>
@@ -37,12 +37,12 @@
               <i class="glyphicon glyphicon-th-list"></i> <span>Produk</span>
             </a>
           </li>
-          <li class="{{set_active('kurir.index')}}">
+          {{-- <li class="{{set_active('kurir.index')}}">
             <a href="{{route('kurir.index')}}">
               <i class="glyphicon glyphicon-th-list"></i> <span>Kurir</span>
             </a>
-          </li>
-          <li class="treeview">
+          </li> --}}
+          {{-- <li class="treeview">
             <a href="#"><i class="glyphicon glyphicon-list"></i> <span>Wilayah</span>
               <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
@@ -59,13 +59,13 @@
                   <i class="glyphicon glyphicon-th-list"></i> <span>Kota/Kabupaten</span>
                 </a>
               </li>
-              {{-- <li>
+              <li>
                 <a href="{{url('admin/kecamatan')}}">
                   <i class="glyphicon glyphicon-th-list"></i> <span>Kecamatan</span>
                 </a>
-              </li> --}}
+              </li>
             </ul>
-          </li>
+          </li> --}}
           <li class="{{set_active('orders.index')}}">
             <a href="{{ route('orders.index') }}">
               <i class="glyphicon glyphicon-th-list"></i> <span>Order</span>
@@ -76,12 +76,12 @@
               <i class="glyphicon glyphicon-th-list"></i> <span>Laporan Order</span>
             </a>
           </li>
-          <li class="{{set_active('report.return')}}">
+          {{-- <li class="{{set_active('report.return')}}">
             <a href="{{ route('report.return') }}">
               <i class="glyphicon glyphicon-th-list"></i> <span>Laporan Return</span>
             </a>
           </li>
-          {{-- <li class="treeview {{set_active('report.order', 'report.return')}}">
+ --}}          {{-- <li class="treeview {{set_active('report.order', 'report.return')}}">
             <a href="#"><i class="glyphicon glyphicon-list"></i><span>Laporan</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>

@@ -31,7 +31,12 @@
                             <p class="text-danger">{{ $errors->first('nama') }}</p>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
+                            <label for="email">Email </label>
+                            @if (empty($customer->email_verified_at))
+                                <span>belum terverifikasi, klik <a href="{{ route('verification.notice') }}">tautan</a> untuk verifikasi</span>
+                            @else
+                                <span>sudah terverifikasi</span>
+                            @endif
                             <input type="email" name="email" id="email" class="form-control" required value="{{ $customer->email }}" readonly>
                             <p class="text-danger">{{ $errors->first('email') }}</p>
                         </div>
@@ -39,10 +44,10 @@
                             <label for="password">Password</label>
                             <input type="password" name="password" id="password" class="form-control" placeholder="******">
                             <p class="text-danger">{{ $errors->first('password') }}</p>
-                            <p>Biarkan kosong jika tidak ingin mengganti password</p>
+                            <p class="alert alert-info">Biarkan kosong jika tidak ingin mengganti password</p>
                         </div>
                         <div class="form-group">
-                            <label for="no_hp">No Telp</label>
+                            <label for="no_hp">No Hp</label>
                             <input type="text" name="no_hp" id="no_hp" class="form-control" required value="{{ $customer->no_hp }}">
                             <p class="text-danger">{{ $errors->first('no_hp') }}</p>
                         </div>
@@ -94,7 +99,7 @@
             //MAKA AKAN MELAKUKAN REQUEST KE URL /API/CITY
             //DAN MENGIRIMKAN DATA PROVINCE_ID
             $.ajax({
-                url: "{{ url('/api/city') }}",
+                url: "{{ url('/api/cityF') }}",
                 type: "GET",
                 data: { province_id: $(this).val() },
                 success: function(html){
@@ -125,7 +130,7 @@
         function loadCity(province_id, type) {
             return new Promise((resolve, reject) => {
                 $.ajax({
-                    url: "{{ url('/api/city') }}",
+                    url: "{{ url('/api/cityF') }}",
                     type: "GET",
                     data: { province_id: province_id },
                     success: function(html){
@@ -135,7 +140,6 @@
                             
                             // KITA TAMPUNG VALUE CITY_ID SAAT INI
                             let city_selected = {{ $customer->city_id }};
-                            //console.log(city_selected);
                            //KEMUDIAN DICEK, JIKA CITY_SELECTED SAMA DENGAN ID CITY YANG DOLOOPING MAKA 'SELECTED' AKAN DIAPPEND KE TAG OPTION
                             let selected = type == 'bySelect' && city_selected == item.id ? 'selected':'';
                             // console.log(selected);

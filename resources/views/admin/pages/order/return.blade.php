@@ -43,12 +43,13 @@
                                             <td>{{ $order->pelanggan_no_hp }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Alasan Return</th>
-                                            <td>{{ $order->return->reason }}</td>
+                                            <th>Alamat</th>
+                                            <td>{{ $order->pelanggan_alamat }}, {{  $order->pelanggan->city->title}}, {{ $order->pelanggan->city->province->title }}</td>
+                                            {{-- <td>{{ $order->return->refund_transfer }}</td> --}}
                                         </tr>
                                         <tr>
-                                            <th>Rekening Pengembalian Dana</th>
-                                            <td>{{ $order->return->refund_transfer }}</td>
+                                            <th>Alasan Return</th>
+                                            <td>{{ $order->return->reason }}</td>
                                         </tr>
                                         <tr>
                                             <th>Status</th>
@@ -67,6 +68,18 @@
                                             </select>
                                             <div class="input-group-prepend">
                                                 <button class="btn btn-primary btn-sm">Proses Return</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    @endif
+                                    @if ($order->return->status == 1)
+                                    <form action="{{ route('orders.shipping_return') }}" method="post">
+                                        @csrf
+                                        <div class="input-group mb-3">
+                                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                            <input type="text" name="tracking_number" placeholder="Masukkan Nomor Resi" class="form-control" required>
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-primary btn-sm">Kirim Return</button>
                                             </div>
                                         </div>
                                     </form>

@@ -10,6 +10,13 @@ use App\Category;
 
 class HomeController extends Controller
 {
+    private function getCarts()
+    {
+        $carts = json_decode(request()->cookie('dw-carts'), true);
+        $carts = $carts != '' ? $carts:[];
+        return $carts;
+    }
+
     /**
      * Create a new controller instance.
      *
@@ -17,7 +24,8 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware(['auth', 'verified']);
+        $this->middleware(['auth']);
     }
 
     /**
@@ -35,10 +43,15 @@ class HomeController extends Controller
             return view('test', compact('products', 'categories'));
         }
 
+        $carts = $this->getCarts();
+        $totalcart = collect($carts)->sum(function($q) {
+            return $q['jumlah'];
+            });
+
         if (Auth::user()->admin == 1) {
             return view('admin.dashboard');
         } elseif (Auth::user()->admin == 0) {
-            return view('welcome', compact('products', 'categories'));
+            return view('welcome', compact('products', 'carts', 'categories', 'totalcart'));
         }
     }
 }

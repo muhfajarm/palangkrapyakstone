@@ -53,7 +53,7 @@
             <tr>
                 <th>InvoiceID</th>
                 <th>Pelanggan</th>
-                <th>Subtotal</th>
+                <th>Harga</th>
                 <th>Tanggal</th>
             </tr>
         </thead>
@@ -65,7 +65,7 @@
                     <td>
                         <strong>{{ $row->pelanggan_nama }}</strong><br>
                         <label><strong>Telp:</strong> {{ $row->pelanggan_no_hp }}</label><br>
-                        <label><strong>Alamat:</strong> {{ $row->pelanggan_alamat }} {{ $row->pelanggan->district->nama }} - {{  $row->pelanggan->district->city->nama}}, {{ $row->pelanggan->district->city->province->nama }}</label>
+                        <label><strong>Alamat:</strong> {{ $row->pelanggan_alamat }}, {{  $row->pelanggan->city->title }}, {{ $row->pelanggan->city->province->title }}</label>
                     </td>
                     <td>{{ formatRupiah($row->subtotal) }}</td>
                     <td>{{ $row->created_at->format('d-m-Y') }}</td>

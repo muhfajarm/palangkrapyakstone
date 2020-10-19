@@ -137,7 +137,7 @@ class OrderController extends Controller
 
     public function return($invoice)
     {
-        $order = Order::with(['return', 'pelanggan'])->where('invoice', $invoice)->first();
+        $order = Order::with(['return', 'pelanggan.city.province'])->where('invoice', $invoice)->first();
         return view('admin.pages.order.return', compact('order'));
     }
 
@@ -147,6 +147,15 @@ class OrderController extends Controller
         $order = Order::find($request->order_id); //query berdasarkan order_id
         $order->return()->update(['status' => $request->status]); //update status yang ada di table order_returns melalui order
         $order->update(['status' => 'diterima']); //update status yang ada di table orders
+        return redirect()->back();
+    }
+
+    public function shippingReturn(Request $request)
+    {
+        $this->validate($request, ['tracking_number' => 'required']);
+        $order = Order::find($request->order_id);
+        $order->return()->update(['tracking_number' => $request->tracking_number, 'status' => 3]);
+        // $order->update(['status' => 'dikirim']);
         return redirect()->back();
     }
 }

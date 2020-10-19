@@ -28,7 +28,13 @@ class ReportController extends Controller
         }
 
         //BUAT QUERY KE DB MENGGUNAKAN WHEREBETWEEN DARI TANGGAL FILTER
-        $orders = Order::with(['pelanggan.city'])->whereBetween('created_at', [$start, $end])->get();
+        $orders = Order::with(['pelanggan.city.province'])
+                ->whereBetween('created_at', [$start, $end])
+                ->where('status', '=', 'success')
+                ->orWhere('status', 'proses')
+                ->orWhere('status', 'dikirim')
+                ->orWhere('status', 'diterima')
+                ->get();
         // return $orders;
         //KEMUDIAN LOAD VIEW
         return view('admin.pages.report.order', compact('orders'));
@@ -42,7 +48,13 @@ class ReportController extends Controller
         $end = Carbon::parse($date[1])->format('Y-m-d') . ' 23:59:59';
 
         //KEMUDIAN BUAT QUERY BERDASARKAN RANGE CREATED_AT YANG TELAH DITETAPKAN RANGENYA DARI $START KE $END
-        $orders = Order::with(['pelanggan.city'])->whereBetween('created_at', [$start, $end])->get();
+        $orders = Order::with(['pelanggan.city.province'])
+                ->whereBetween('created_at', [$start, $end])
+                ->where('status', '=', 'success')
+                ->orWhere('status', 'proses')
+                ->orWhere('status', 'dikirim')
+                ->orWhere('status', 'diterima')
+                ->get();
         //LOAD VIEW UNTUK PDFNYA DENGAN MENGIRIMKAN DATA DARI HASIL QUERY
         $pdf = PDF::loadView('admin.pages.report.order_pdf', compact('orders', 'date'));
         //GENERATE PDF-NYA
@@ -60,7 +72,13 @@ class ReportController extends Controller
 	        $end = Carbon::parse($date[1])->format('Y-m-d') . ' 23:59:59';
 	    }
 
-	    $orders = Order::with(['pelanggan.city'])->has('return')->whereBetween('created_at', [$start, $end])->get();
+	    $orders = Order::with(['pelanggan.city.province'])
+                ->has('return')
+                ->whereBetween('created_at', [$start, $end])
+                // ->where('status', '=', 1)
+                // ->orWhere('status', 4)
+                // ->orWhere('status', 5)
+                ->get();
 	    return view('admin.pages.report.return', compact('orders'));
 	}
 
@@ -70,7 +88,10 @@ class ReportController extends Controller
 	    $start = Carbon::parse($date[0])->format('Y-m-d') . ' 00:00:01';
 	    $end = Carbon::parse($date[1])->format('Y-m-d') . ' 23:59:59';
 
-	    $orders = Order::with(['pelanggan.city'])->has('return')->whereBetween('created_at', [$start, $end])->get();
+	    $orders = Order::with(['pelanggan.city.province'])
+                ->has('return')
+                ->whereBetween('created_at', [$start, $end])
+                ->get();
 	    $pdf = PDF::loadView('admin.pages.report.return_pdf', compact('orders', 'date'));
 	    return $pdf->stream();
 	}

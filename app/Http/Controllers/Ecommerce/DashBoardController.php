@@ -9,6 +9,11 @@ use App\Order;
 
 class DashBoardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth']);
+    }
+    
     public function index()
     {
         // $orders = Order::selectRaw('COALESCE(sum(CASE WHEN status = 0 THEN subtotal END), 0) as pending, 

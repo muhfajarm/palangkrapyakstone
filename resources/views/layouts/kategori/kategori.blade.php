@@ -46,10 +46,11 @@
                 <div class="mt-1 col-md-3">
                     <div class="card mb-2 shadow-sm" style="width: 16rem;">
                         <div class="card-body">
-                            <img src="{{ asset('storage/products/' . $product->image) }}"
-                            width="80px" height="250px" class="card-img-top" alt="{{ $product->nama }}">
-                            <a href="/produk/{{ $product->slug }}" class="card-title">{{ $product->nama }}</a>
-                            <p class="card-text">{{ formatRupiah($product->harga_jual_3) }}</p>
+                            <a href="{{ route('front.show', $product->slug) }}">
+                                <img src="{{ asset('storage/products/' . $product->gambar) }}" width="80px" height="250px" class="card-img-top" alt="{{ $product->nama }}">
+                            </a>
+                            <a href="/p/{{ $product->slug }}" class="card-title">{{ $product->nama }}</a>
+                            <p class="card-text">{{ formatRupiah($product->harga) }}</p>
                         </div>
                     </div>
                 </div>
@@ -88,4 +89,8 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+    @include('layouts.kategori.js')
 @endsection

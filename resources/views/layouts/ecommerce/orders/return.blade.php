@@ -29,10 +29,10 @@
                           <label for="">Alasan Return</label>
                           <textarea name="reason" cols="5" rows="5" class="form-control" required></textarea>
                       </div>
-                      <div class="form-group">
+                      {{-- <div class="form-group">
                           <label for="">Refund Transfer</label>
                           <input type="text" name="refund_transfer" class="form-control" required>
-                      </div>
+                      </div> --}}
                       <div class="form-group">
                           <label for="">Foto</label>
                           <input type="file" name="photo" class="form-control" required>

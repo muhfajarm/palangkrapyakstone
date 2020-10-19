@@ -20,6 +20,7 @@ class OrderController extends Controller
 	public function index()
 	{
 		$orders = Order::withCount(['return'])
+			->with(['return'])
 			->where('pelanggan_id', auth()->user()->id)
         	->orderBy('created_at', 'DESC')->paginate(10);
 	    return view('layouts.ecommerce.orders.index', compact('orders'));
@@ -156,7 +157,7 @@ class OrderController extends Controller
 		//LAKUKAN VALIDASI DATA
 	    $this->validate($request, [
 	        'reason' => 'required|string',
-	        'refund_transfer' => 'required|string',
+	        // 'refund_transfer' => 'required|string',
 	        'photo' => 'required|image|mimes:jpg,png,jpeg'
 	    ]);
 
@@ -180,7 +181,7 @@ class OrderController extends Controller
 	            'order_id' => $id,
 	            'photo' => $filename,
 	            'reason' => $request->reason,
-	            'refund_transfer' => $request->refund_transfer,
+	            // 'refund_transfer' => $request->refund_transfer,
 	            'status' => 0
 	        ]);
 
@@ -202,5 +203,14 @@ class OrderController extends Controller
             'parse_mode' => 'HTML',
             'text' => $text
         ]);
+	}
+
+	public function acceptReturn(Request $request)
+	{
+	    $return = OrderReturn::where('order_id', $request->order_id);
+
+	    $return->update(['status' => 4]);
+
+	    return redirect()->back()->with(['success' => 'Return Dikonfirmasi']);
 	}
 }
